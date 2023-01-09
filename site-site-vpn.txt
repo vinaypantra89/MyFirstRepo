@@ -1,3 +1,4 @@
+# This is Release 1.0
 #HUB-RG Creation
 
 echo "Creating Azure Resource Group"s
