@@ -1,4 +1,4 @@
-# This is Release 1.0
+# This is Releaseee 2.0
 #HUB-RG Creation
 
 echo "Creating Azure Resource Group"s
