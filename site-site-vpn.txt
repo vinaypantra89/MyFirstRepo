@@ -1,0 +1,53 @@
+#HUB-RG Creation
+
+echo "Creating Azure Resource Group"s
+az group create -l eastus -n HUB-RG
+ 
+echo "Creating Azure Virtual Network"
+az network vnet create -g HUB-RG -n HUB-RG-vNET1 --address-prefix 10.1.0.0/16 \
+--subnet-name HUB-RG-Subnet-1 --subnet-prefix 10.1.1.0/24 \
+
+az network nsg create -g HUB-RG -n HUB-RG_NSG1
+az network nsg rule create -g HUB-RG --nsg-name HUB-RG_NSG1 -n HUB-RG_NSG1_RULE1 --priority 100 \
+--source-address-prefixes '*' --source-port-ranges '*'     --destination-address-prefixes '*' \
+--destination-port-ranges '*' --access Allow     --protocol '*' --description "Allowing All Traffic For Now"
+
+
+az vm create --resource-group HUB-RG --name MGMTVM --image win2016Datacenter --vnet-name HUB-RG-vNET1 \
+--subnet HUB-RG-Subnet-1 --admin-username adminuser --admin-password "India@123456" --size Standard_B2ms \
+--nsg ""
+
+#BACK_END-RG Creation
+
+echo "Creating Azure Resource Group"
+az group create -l eastus -n BACK_END-RG
+ 
+echo "Creating Azure Virtual Network"
+az network vnet create -g BACK_END-RG -n BACK_END-vNET1 --address-prefix 192.168.0.0/16 \
+--subnet-name BACK_END-Subnet-1 --subnet-prefix 192.168.1.0/24 -l eastus
+
+az network nsg create -g BACK_END-RG -n BACK_END-RG_NSG1
+az network nsg rule create -g BACK_END-RG --nsg-name BACK_END-RG_NSG1 -n BACK_END-RG_NSG1_RULE1 --priority 100 \
+--source-address-prefixes '*' --source-port-ranges '*'     --destination-address-prefixes '*' \
+--destination-port-ranges '*' --access Allow     --protocol '*' --description "Allowing All Traffic For Now"
+
+az vm create --resource-group BACK_END-RG --name BACK_END-VM --image win2016Datacenter --vnet-name BACK_END-vNET1 \
+--subnet BACK_END-Subnet-1 --admin-username adminuser --admin-password "India@123456" --size Standard_B2ms \
+--nsg ""
+
+#Front_END-RG Creation
+
+echo "Creating Azure Resource Group"
+az group create -l eastus -n Front_END-RG
+
+az network vnet create -g Front_END-RG -n Front_END-vNET1 --address-prefix 172.16.0.0/16 \
+--subnet-name Front_END-Subnet-1 --subnet-prefix 172.16.1.0/24 -l eastus
+
+az network nsg create -g Front_END-RG -n Front_END-RG_NSG1
+az network nsg rule create -g Front_END-RG --nsg-name Front_END-RG_NSG1 -n Front_END-RG_NSG1_RULE1 --priority 100 \
+--source-address-prefixes '*' --source-port-ranges '*'     --destination-address-prefixes '*' \
+--destination-port-ranges '*' --access Allow     --protocol '*' --description "Allowing All Traffic For Now"
+
+az vm create --resource-group Front_END-RG --name Front_END-VM --image win2016Datacenter --vnet-name Front_END-vNET1 \
+--subnet Front_END-Subnet-1 --admin-username adminuser --admin-password "India@123456" --size Standard_B2ms \
+--nsg ""
